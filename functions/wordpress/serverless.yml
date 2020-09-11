@@ -1,0 +1,82 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: wordpress
+frameworkVersion: '2'
+
+custom:
+  stackname: !ImportValue 'StackName'
+  FUNCTION_PATH: ${env:wordpress_functionpath}
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  memorySize: 1024
+  timeout: 15
+  stage: dev
+  region: us-east-2
+  environment:
+   DB_ARN: !ImportValue 'DatabaseClusterArn'
+   SECRETS_ARN: !ImportValue 'DatabaseSecretArn'
+   DB_NAME: !ImportValue 'DatabaseName'
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - 'logs:CreateLogGroup'
+        - 'logs:CreateLogStream'
+        - 'logs:PutLogEvents'
+      Resource:
+        - 'arn:aws:logs:us-east-2:*:*'
+    - Effect: Allow
+      Action:
+        - 'rds-data:*'
+      Resource: !ImportValue 'DatabaseClusterArn'
+    - Effect: 'Allow'
+      Action:
+        - 'ec2:DescribeNetworkInterfaces'
+        - 'ec2:CreateNetworkInterface'
+        - 'ec2:CreateNetworkInterfacePermission'
+        - 'ec2:DeleteNetworkInterface'
+      Resource: '*'
+    - Effect: 'Allow'
+      Action:
+        - 'secretsmanager:GetSecretValue'
+      Resource: !ImportValue 'DatabaseSecretArn'
+
+# you can add packaging information here
+#package:
+#  include:
+#    - include-me.js
+#    - include-me-dir/**
+#  exclude:
+#    - exclude-me.js
+#    - exclude-me-dir/**
+
+functions:
+  create_function:
+    handler: ${self:custom.FUNCTION_PATH}/wordpress_createuser.user
+    events:
+       - eventBridge:
+          eventBus: wordpress_create
+          pattern:
+            source:
+              - wordpress.createuser
+  update_function:
+    handler: ${self:custom.FUNCTION_PATH}/wordpress_updateuser.user
+    events:
+       - eventBridge:
+          eventBus: wordpress_update
+          pattern:
+            source:
+              - wordpress.updateuser

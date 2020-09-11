@@ -1,0 +1,82 @@
+//'use strict';
+
+//module.exports.get_member = async event => {
+//  return {
+//    statusCode: 200,
+//    body: JSON.stringify(
+//      {
+//        message: 'Go Serverless v1.0! Your function executed successfully!',
+//        input: event,
+//      },
+//      null,
+//      2
+//    ),
+//  };
+
+  // Use this code if you don't use the http event with the LAMBDA-PROXY integration
+  // return { message: 'Go Serverless v1.0! Your function executed successfully!', event };
+//};
+
+
+// require the AWS SDK
+const AWS = require('aws-sdk')
+const rdsDataService = new AWS.RDSDataService()
+
+module.exports.survey = (event, context, callback) => {
+  // prepare SQL command
+  let sqlParams = {
+    secretArn: process.env.SECRETS_ARN,
+    resourceArn: process.env.DB_ARN,
+    sql: 'SHOW TABLES;',
+    database: process.env.DB_NAME,
+    includeResultMetadata: true
+  }
+
+  let body = JSON.stringify(
+    {
+      message: 'Received event',
+      input: event,
+    },
+    null,
+    2
+  )
+
+  console.log(body)
+
+  // run SQL command
+  rdsDataService.executeStatement(sqlParams, function (err, data) {
+    if (err) {
+      // error
+      console.log(err)
+      callback('Query Failed')
+    } else {
+      // init
+      var rows = []
+      var cols = []
+
+      // build an array of columns
+      data.columnMetadata.map((v, i) => {
+        cols.push(v.name)
+      });
+
+      // build an array of rows: { key=>value }
+      data.records.map((r) => {
+        var row = {}
+        r.map((v, i) => {
+          if (v.stringValue !== "undefined") { row[cols[i]] = v.stringValue; }
+          else if (v.blobValue !== "undefined") { row[cols[i]] = v.blobValue; }
+          else if (v.doubleValue !== "undefined") { row[cols[i]] = v.doubleValue; }
+          else if (v.longValue !== "undefined") { row[cols[i]] = v.longValue; }
+          else if (v.booleanValue !== "undefined") { row[cols[i]] = v.booleanValue; }
+          else if (v.isNull) { row[cols[i]] = null; }
+        })
+        rows.push(row)
+      })
+
+      // done
+      console.log('Found rows: ' + rows.length)
+      callback(null, rows)
+    }
+  })
+}
+

@@ -1,0 +1,97 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Provisions Aurora Serverless
+Parameters:
+  AppName:
+    Description: "Application Name"
+    Type: String
+    Default: onesky 
+  EnvType:
+    Description: "Environment type (eg, dev, qa, prod)"
+    Type: String
+    Default: dev
+  DBClusterName:
+    Description: "Aurora RDS cluster name"
+    Type: String
+    Default: onesky-rds-cluster
+  DatabaseName:
+    Description: "Aurora RDS database name"
+    Type: String
+    Default: onesky_db
+  DBMasterUserName:
+    AllowedPattern: "[a-zA-Z0-9_]+"
+    ConstraintDescription: must be between 1 to 16 alphanumeric characters.
+    Description: The database admin account user name, between 1 to 16 alphanumeric characters.
+    MaxLength: '16'
+    MinLength: '1'
+    Type: String
+    Default: onesky
+  DBSubnetList:
+    Description: "List of subnets for the Aurora RDS cluster"
+    Type: List<AWS::EC2::Subnet::Id>
+    ConstraintDescription: "must be a list of at least three existing subnets associated with at least three different availability zones."
+    Default: "subnet-7590441e,subnet-52161428,subnet-10b2d85c"
+Resources:
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: CloudFormation managed DB subnet group.
+      SubnetIds:
+        - !Select [0, !Ref DBSubnetList ]
+        - !Select [1, !Ref DBSubnetList ]
+        - !Select [2, !Ref DBSubnetList ]
+  DBSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub "${EnvType}-AuroraUserSecret"
+      Description: RDS database auto-generated user password
+      GenerateSecretString:
+        SecretStringTemplate: !Sub '{"username": "${DBMasterUserName}"}'
+        GenerateStringKey: "password"
+        PasswordLength: 30
+        ExcludeCharacters: '"@/\'
+      Tags:
+        -
+          Key: AppName
+          Value: !Ref AppName
+  RDSCluster:
+    Type: AWS::RDS::DBCluster
+    Properties:
+      DBClusterIdentifier: !Ref DBClusterName
+      MasterUsername: !Join ['', ['{{resolve:secretsmanager:', !Ref DBSecret, ':SecretString:username}}' ]]
+      MasterUserPassword: !Join ['', ['{{resolve:secretsmanager:', !Ref DBSecret, ':SecretString:password}}' ]]
+      DatabaseName: !Ref DatabaseName
+      Engine: aurora
+      EngineMode: serverless
+      EngineVersion: 5.6.10a
+      ScalingConfiguration:
+        AutoPause: true
+        MaxCapacity: 4
+        MinCapacity: 1
+        SecondsUntilAutoPause: 600 # 10 min
+      DBSubnetGroupName:
+        Ref: DBSubnetGroup
+Outputs:
+  StackName:
+    Description: Stack Name
+    Value: !Ref AWS::StackName
+    Export:
+      Name: StackName
+
+  DatabaseName:
+    Description: Database Name
+    Value: !Ref DatabaseName
+    Export:
+      Name: DatabaseName
+
+  DatabaseClusterArn:
+    Description: Cluster ARN
+    Value: !Sub arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:${DBClusterName}
+    Export:
+      Name: DatabaseClusterArn
+
+  DatabaseSecretArn:
+    Description: Secret ARN
+    Value: !Ref DBSecret
+    Export:
+      Name: DatabaseSecretArn
+     
