@@ -4,9 +4,10 @@
 ```
 Install the following packages:
 $ npm i axios
-$ npm i data-api-client [data api client](https://github.com/jeremydaly/data-api-client#enabling-data-api)
+$ npm i data-api-client   https://github.com/jeremydaly/data-api-client#enabling-data-api
 
-Use the deploy.sh file to deploy the onesky resources. Change param names if desired before running.
+Use the deploy.sh file to deploy the onesky resources. Edit param names (only if you want to change the dir structure for files) and run the file.
+$ ./deploy.sh
 ```
 
 ## Project Structure
