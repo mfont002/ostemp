@@ -38,14 +38,14 @@ export function getmember(event, context, callback) {
   getMember = async (config) => {
     try {
       const resp = await axios.get(config)
-      processDbUser(resp.data);
+      processUser(resp.data);
     }
     catch (error) {
       console.error(error);
     }
   }
 
-  processDbUser = async (user) => {
+  processUser = async (user) => {
     try {
       let dest_id = await data.query(
         'select destination_id from source_map where source_id = :id',
@@ -53,133 +53,71 @@ export function getmember(event, context, callback) {
       )
 
       if (dest_id == 0) {
-        let result = await data.transaction().query('insert into member' +
-          '(username,' +
-          'status,' +
-          'creation_date,' +
-          'activated,' +
-          'first_name,' +
-          'last_name,' +
-          'email,' +
-          'phone,' +
-          'hkid,' +
-          'chinese_name,' +
-          'gender,' +
-          'birthday,' +
-          'child_ethnicity,' +
-          'born_in_hk,' +
-          'date_of_arrival,' +
-          'child_dev,' +
-          'child_diag,' +
-          'child_birth_place,' +
-          'parent_lastname,' +
-          'parent_firstname,' +
-          'parent_chinese_name,' +
-          'parent_dob,' +
-          'parent_gender,' +
-          'parent_marital_status,' +
-          'parent_ethnicity,' +
-          'parent_born_in_hk,' +
-          'parent_date_of_arrival,' +
-          'parent_birth_place,' +
-          'relationship,' +
-          'parent_hkid,' +
-          'parent_contact_no,' +
-          'address,' +
-          'parent_cssa_iss,' +
-          'parent_monthly_income_household,' +
-          'parent_hear_about_us,' +
-          'cgg_1_caregiver_surname,' +
-          'cgg_1_caregiver_firstname,' +
-          'cgg_1_caregiver_chinese_name,' +
-          'cgg_1_caregiver_gender,' +
-          'cgg_1_caregiver_dob,' +
-          'cgg_1_caregiver_ethnicity,' +
-          'cgg_1_caregiver_hkid,' +
-          'cgg_1_caregiver_relationship,' +
-          'cgg_1_caregiver_contact_no,' +
-          'cgg_2_caregiver_surname,' +
-          'cgg_2_caregiver_firstname,' +
-          'cgg_2_caregiver_chinese_name,' +
-          'cgg_2_caregiver_gender,' +
-          'cgg_2_caregiver_dob,' +
-          'cgg_2_caregiver_ethnicity,' +
-          'cgg_2_caregiver_hkid,' +
-          'cgg_2_caregiver_relationship,' +
-          'cgg_2_caregiver_contact_no,' +
-          'energency_name,' +
-          'emergency_contact_no,' +
-          'emergency_relationship,' +
-          'companion,' +
-          'FIELD67,' +
-          'expiration_date,' +
-          'member_legal_guardian,' +
-          'disclaimer_and_pics)' +
-          ' VALUES(:member_type,:username,:status,:creation_date,:activated,:first_name,:last_name,:email,:phone,:hkid,:chinese_name,:gender,:birthday,:child_ethnicity,:born_in_hk,:date_of_arrival,:child_dev,:child_diag,' +
-          ':child_birth_place,:parent_lastname,:parent_firstname,:parent_chinese_name,:parent_dob,:parent_gender,:parent_marital_status,:parent_ethnicity,:parent_born_in_hk,' +
-          ':parent_date_of_arrival,:parent_birth_place,:relationship,:parent_hkid,:parent_contact_no,:address,:parent_cssa_iss,:parent_monthly_income_household,:parent_hear_about_us,' +
-          ':cgg_1_caregiver_surname,:cgg_1_caregiver_firstname,:cgg_1_caregiver_chinese_name,:cgg_1_caregiver_gender,:cgg_1_caregiver_dob,:cgg_1_caregiver_ethnicity,:cgg_1_caregiver_hkid,' +
-          ':cgg_1_caregiver_relationship,' +
-          ':cgg_1_caregiver_contact_no,' +
-          ':cgg_2_caregiver_surname,' +
-          ':cgg_2_caregiver_firstname,' +
-          ':cgg_2_caregiver_chinese_name,' +
-          ':cgg_2_caregiver_gender,' +
-          ':cgg_2_caregiver_dob,' +
-          ':cgg_2_caregiver_ethnicity,' +
-          ':cgg_2_caregiver_hkid,' +
-          ':cgg_2_caregiver_relationship,' +
-          ':cgg_2_caregiver_contact_no,' +
-          ':energency_name,' +
-          ':emergency_contact_no,' +
-          ':emergency_relationship,' +
-          ':companion,' +
-          ':FIELD67,' +
-          ':expiration_date,' +
-          ':member_legal_guardian,' +
-          ':disclaimer_and_pics),' +
-          ' {member_type: "child",username: user.username,status: user.status,creation_date: user.creation_date,activated: user.activated, first_name: user.first_name, last_name: user.last_name, email: user.email, phone: user.phone, hkid: user.hkid, chinese_name: user.chinese_name, gender: user.gender, birthday: user.birthday, child_ethnicity: user.child_ethnicity, born_in_hk: user.born_in_hk, date_of_arrival: user.date_of_arrival,' +
-          'child_dev: user.child_dev, child_diag: user.child_diag,' +
-          'child_birth_place: user.child_birth_place, parent_lastname: user.parent_lastname,parent_firstname: user.parent_firstname, parent_chinese_name: user.parent_chinese_name,' +
-          'parent_dob: user.parent_dob,parent_gender: user.parent_gender,parent_marital_status: user.parent_marital_status,parent_ethnicity: user.parent_ethnicity,parent_born_in_hk: user.parent_born_in_hk,' +
-          'parent_date_of_arrival: user.parent_date_of_arrival,parent_birth_place: user.parent_birth_place,relationship: user.parent_relationship,parent_hkid: user.parent_hkid,' +
-          'parent_contact_no: user.parent_contact_no,address: user.address,parent_cssa_iss: user.parent_cssa_iss,parent_monthly_income_household: user.parent_monthly_income_household,' +
-          'parent_hear_about_us: user.parent_hear_about_us,' +
-          'cgg_1_caregiver_surname: user.cgg_1_caregiver_surname,' +
-          'cgg_1_caregiver_firstname: user.cgg_1_caregiver_firstname,' +
-          'cgg_1_caregiver_chinese_name: user.cgg_1_caregiver_chinese_name,' +
-          'cgg_1_caregiver_gender: user.cgg_1_caregiver_gender,' +
-          'cgg_1_caregiver_dob: cgg_1_caregiver_dob,' +
-          'cgg_1_caregiver_ethnicity: cgg_1_caregiver_ethnicity,' +
-          'cgg_1_caregiver_hkid: user.cgg_1_caregiver_hkid,' +
-          'cgg_1_caregiver_relationship: user.cgg_1_caregiver_relationship,' +
-          'cgg_1_caregiver_contact_no: user.cgg_1_caregiver_contact_no,' +
-          'cgg_2_caregiver_surname: user.cgg_1_caregiver_surname,' +
-          'cgg_2_caregiver_firstname: user.cgg_1_caregiver_firstname,' +
-          'cgg_2_caregiver_chinese_name: user.cgg_1_caregiver_chinese_name,' +
-          'cgg_2_caregiver_gender: user.cgg_1_caregiver_gender,' +
-          'cgg_2_caregiver_dob: cgg_1_caregiver_dob,' +
-          'cgg_2_caregiver_ethnicity: cgg_1_caregiver_ethnicity,' +
-          'cgg_2_caregiver_hkid:, user.cgg_1_caregiver_hkid,' +
-          'cgg_2_caregiver_relationship: user.cgg_1_caregiver_relationship,' +
-          'cgg_2_caregiver_contact_no: user.cgg_1_caregiver_contact_no,' +
-          'energency_name: user.energency_name,' +
-          'emergency_contact_no:, user.emergency_contact_no,' +
-          'emergency_relationship: user.emergency_relationship,' +
-          'companion: user.companion,' +
-          'FIELD67: user.FIELD67,' +
-          'expiration_date: user.expiration_date,' +
-          'member_legal_guardian: user.member_legal_guardian,' +
-          'disclaimer_and_pics: user.disclaimer_and_pics}')
-          .query((r) => ['insert into source_map (source_id, source_name, destination_id, destination_name)' +
-            'values(:source_id :source_name, :destination_id :destination_name),' +
-            '{source_id: user.id, source_name: "ievents", destination_id: r.insertId, destination_name: "member" }'])
-          .query('insert into member_group (type) values(:type)', { type: "Household" })
-          .query((x) => ['insert into member_group_meta (member_group_id, meta_key, meta_value) values(:member_group_id, :meta_key, :meta_value)' +
-            ',{ member_group_id: x.insertId, meta_key: "name", meta_value: user.last_name+"Household" }'])
-          .query((r, x) => ['insert into member_group_map (member_id, group_id) values(:member_id, :group_id)', { member_id: r.insertId, group_id: r.insertId }])
-          .rollback((e, status) => { console.log(e) }) // optional
-          .commit()
+
+
+        let child_res = await data.transaction().query('insert into member (member_type) VALUES(:member_type)',{member_type: 'child'})
+          .query((r) => ['insert into source_map (source_id, source_name, destination_id, destination_name) values(:source_id :source_name, :destination_id :destination_name)'],
+          [
+            [{ source_id: user.id, source_name: "ievents", destination_id: r.insertId, destination_name: "member" }]
+          ])
+
+
+
+        let res = await data.query(
+          'select destination_id from source_map where source_id = :id',
+          { id: user.id }
+        )
+          const dest_id = res.forEach((col) => {
+          const x = col.destination_id
+          return x
+          })
+
+        child_res = await data.transaction().query('insert into member_group (type) values(:type)', { type: "household" })
+        .query((r) => ['insert into member_group_map (member_id, group_id) values(:member_id, :group_id)', 
+          { member_id: dest_id, group_id: r.insertId }])
+         
+
+
+        res = await data.query(
+          'select group_id from member_group_map where member_id = :dest_id',
+          { dest_id: dest_id }
+        )
+        const group_id = res.forEach((col) => {
+          const x = col.destination_id
+          return x
+        })
+
+        child_res = await data.transaction().query((r) => ['insert into member_group_meta (member_group_id, meta_key, meta_value) values(:member_group_id, :meta_key, :meta_value)',
+          { member_group_id: group_id, meta_key: "name", meta_value: user.last_name + "Household"}])
+
+
+          child_res = await data.transaction().query(`INSERT INTO member_meta (member_id,member_key,member_value) VALUES(:member_id,:member_key,:member_value)`,
+            [
+              [{ member_id: r.insertId, member_key: 'user_name', member_value: user.username }],
+              [{ member_id: r.insertId, member_key: 'email', member_value: user.email }],
+              [{ member_id: r.insertId, member_key: 'status', member_value: user.status }],
+              [{ member_id: r.insertId, member_key: 'creation_date', member_value: user.creation_date }],
+              [{ member_id: r.insertId, member_key: 'activated', member_value: user.activated }],
+              [{ member_id: r.insertId, member_key: 'last_name', member_value: user.last_name }],
+              [{ member_id: r.insertId, member_key: 'first_name', member_value: user.first_name }],
+              [{ member_id: r.insertId, member_key: 'chinese_name', member_value: user.chinese_name }],
+              [{ member_id: r.insertId, member_key: 'gender', member_value: user.gender }],
+              [{ member_id: r.insertId, member_key: 'birthdate', member_value: user.birthday }],
+              [{ member_id: r.insertId, member_key: 'ethnicity', member_value: user.child_ethnicity }],
+              [{ member_id: r.insertId, member_key: 'born_in_hk', member_value: user.born_in_hk }],
+              [{ member_id: r.insertId, member_key: 'date_of_arrival', member_value: user.date_of_arrival }],
+              [{ member_id: r.insertId, member_key: 'child_dev', member_value: user.child_dev }],
+              [{ member_id: r.insertId, member_key: 'child_diag', member_value: user.child_diag }],
+              [{ member_id: r.insertId, member_key: 'birth_place', member_value: user.child_birth_place }],
+              [{ member_id: r.insertId, member_key: 'address', member_value: user.address }]
+            ]
+          )
+
+
+
+
+
+
       }
       else {
         let result = await data.transaction()
@@ -310,7 +248,67 @@ export function getmember(event, context, callback) {
     catch (error) {
       console.error(error);
     }
+
+try{
+  let dest_id = await data.query(
+    'select destination_id from source_map where source_id = :id',
+    { id: user.AdultID_Parent }
+  )
+
+  if (dest_id == 0) {
+    let child_res = await data.transaction().query('insert into member (member_type) VALUES(:member_type)',
+      { member_type: 'child' })
+      .query((r) => [`INSERT INTO member_meta (member_id,member_key,member_value) VALUES(:member_id,:member_key,:member_value)`],
+        [
+          [{ member_id: r.insertId, member_key: 'last_name', member_value: user.parent_last_name }],
+          [{ member_id: r.insertId, member_key: 'first_name', member_value: user.parent_first_name }],
+          [{ member_id: r.insertId, member_key: 'chinese_name', member_value: user.chinese_name }],
+          [{ member_id: r.insertId, member_key: 'gender', member_value: user.parent_gender }],
+          [{ member_id: r.insertId, member_key: 'birthdate', member_value: user.parent_dob }],
+          [{ member_id: r.insertId, member_key: 'ethnicity', member_value: user.parent_ethnicity }],
+          [{ member_id: r.insertId, member_key: 'born_in_hk', member_value: user.parent_born_in_hk }],
+          [{ member_id: r.insertId, member_key: 'date_of_arrival', member_value: user.parent_date_of_arrival }],
+          [{ member_id: r.insertId, member_key: 'child_dev', member_value: user.child_dev }],
+          [{ member_id: r.insertId, member_key: 'child_diag', member_value: user.child_diag }],
+          [{ member_id: r.insertId, member_key: 'birth_place', member_value: user.parent_birth_place }]
+          [{ member_id: r.insertId, member_key: 'hkid', member_value: user.parent_hkid }],
+          [{ member_id: r.insertId, member_key: 'contact_number', member_value: user.parent_contact_no }]
+          [{ member_id: r.insertId, member_key: 'cssa_iss', member_value: user.parent_cssa_iss }]
+          [{ member_id: r.insertId, member_key: 'monthly_income_household', member_value: user.parent_monthly_income_household }],
+          [{ member_id: r.insertId, member_key: 'hear_about_us', member_value: user.parent_hear_about_us }]
+        ]
+      )
+
   }
+  else {
+
+  }
+
+}
+catch(error){
+  console.error(error);
+}
+
+
+
+  }
+
+processChild(){
+  
+}
+
+processParent(){
+
+}
+
+processCC1(){
+
+}
+
+processCC2(){
+
+}
+
 
   getMember(config);
 
