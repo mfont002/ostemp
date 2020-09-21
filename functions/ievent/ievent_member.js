@@ -11,7 +11,7 @@ const rdsDataService = new RDSDataService()
 const data = require('data-api-client')({
   secretArn: process.env.SECRETS_ARN,
   resourceArn: process.env.DB_ARN,
-  database: process.env.DB_NAME // default database
+  database: process.env.DB_NAME 
 });
 
 // axios
@@ -64,14 +64,14 @@ export function getmember(event, context, callback) {
   processChild = async (user) => {
 
     let dest_id = await data.query(
-      'select destination_id from source_map where source_id = :id',
+      'select source_id from source_map where source_id = :id',
       { id: user.id }
     )
 
     //check if member exists, if not create new
     if (dest_id == 0) {
       let child_res = await data.transaction().query('insert into member (member_type) VALUES(:member_type)', { member_type: 'child' })
-        .query((r) => ['insert into source_map (source_id, source_name, destination_id, destination_name) values(:source_id :source_name, :destination_id :destination_name)'],
+        .query((r) => ['insert into source_map (source_id, source_name, destination_id, destination_name) values(:source_id, :source_name, :destination_id, :destination_name)'],
           [
             [{ source_id: user.id, source_name: "ievents", destination_id: r.insertId, destination_name: "member" }]
           ])
@@ -189,7 +189,7 @@ export function getmember(event, context, callback) {
     //check if member exists, if not create new
     if (dest_id == 0) {
       let parent_res = await data.transaction().query('insert into member (member_type) VALUES(:member_type)', { member_type: 'parent' })
-        .query((r) => ['insert into source_map (source_id, source_name, destination_id, destination_name) values(:source_id :source_name, :destination_id :destination_name)'],
+        .query((r) => ['insert into source_map (source_id, source_name, destination_id, destination_name) values(:source_id, :source_name, :destination_id, :destination_name)'],
           [
             [{ source_id: user.AdultID_Parent, source_name: 'ievents', destination_id: r.insertId, destination_name: 'member' }]
           ])
@@ -272,7 +272,7 @@ export function getmember(event, context, callback) {
     //check if member exists, if not create new
     if (dest_id == 0) {
       let parent_res = await data.transaction().query('insert into member (member_type) VALUES(:member_type)', { member_type: 'parent' })
-        .query((r) => ['insert into source_map (source_id, source_name, destination_id, destination_name) values(:source_id :source_name, :destination_id :destination_name)'],
+        .query((r) => ['insert into source_map (source_id, source_name, destination_id, destination_name) values(:source_id, :source_name, :destination_id, :destination_name)'],
           [
             [{ source_id: user.AdultID_Caregiver_1, source_name: 'ievents', destination_id: r.insertId, destination_name: 'member' }]
           ])
@@ -344,7 +344,7 @@ export function getmember(event, context, callback) {
     //check if member exists, if not create new
     if (dest_id == 0) {
       let parent_res = await data.transaction().query('insert into member (member_type) VALUES(:member_type)', { member_type: 'parent' })
-        .query((r) => ['insert into source_map (source_id, source_name, destination_id, destination_name) values(:source_id :source_name, :destination_id :destination_name)'],
+        .query((r) => ['insert into source_map (source_id, source_name, destination_id, destination_name) values(:source_id, :source_name, :destination_id, :destination_name)'],
           [
             [{ source_id: user.AdultID_Caregiver_2, source_name: 'ievents', destination_id: r.insertId, destination_name: 'member' }]
           ])

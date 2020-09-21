@@ -9,7 +9,7 @@ const rdsDataService = new RDSDataService()
 const data = require('data-api-client')({
   secretArn: process.env.SECRETS_ARN,
   resourceArn: process.env.DB_ARN,
-  database: process.env.DB_NAME // default database
+  database: process.env.DB_NAME 
 })
 
 // axios
@@ -58,14 +58,14 @@ module.exports.getattendance = (event, context, callback) => {
   attendance = async (booking) => {
 
     let dest_id = await data.query(
-      'select destination_id from source_map where source_id = :booking_id',
+      'select booking_id from source_map where source_id = :booking_id',
       { booking_id: booking.booking_id }
     )
 
     //check if booking exists, if not create new
     if (dest_id == 0) {
       let child_res = await data.transaction().query('insert into booking (activity_type, member_id) VALUES(:activity_type, :member_id)', { activity_type: 'booking', member_id: booking.member_id })
-        .query((r) => ['insert into source_map (source_id, source_name, destination_id, destination_name) values(:source_id :source_name, :destination_id :destination_name)'],
+        .query((r) => ['insert into source_map (source_id, source_name, destination_id, destination_name) values(:source_id, :source_name, :destination_id, :destination_name)'],
           [
             [{ source_id: booking.booking_id, source_name: "ievents", destination_id: r.insertId, destination_name: "activity" }]
           ])
@@ -105,8 +105,6 @@ module.exports.getattendance = (event, context, callback) => {
           [{ booking_id: book_id, booking_key: 'Remark', booking_value: booking.Remark }]
         ]
       )
-
-      return { group_id, child_id };
 
     }
 
