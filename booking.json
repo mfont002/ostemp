@@ -1,0 +1,52 @@
+{
+    "bookings": [
+        {
+            "booking_id": 1,
+            "reference_code": "BOOK1",
+            "create_date": "1973-03-30T18:15:30.625Z",
+            "booking_timeslot": "2020-03-01T20:10:40.625Z",
+            "bookingdate_and_timeslot": "2020-03-BOOK1",
+            "status": "active",
+            "member_id": 11,
+            "member_username": "ppiper",
+            "Attended": true,
+            "quota_used": false,
+            "checkin_headcount_children": 5,
+            "checkin_headcount_adults": 10,
+            "checkin_headcount_all": 20,
+            "checkin_time": "2020-03-01T20:10:40.625Z",
+            "checkout_time": "2020-03-03T20:10:40.625Z",
+            "checkin_time_parent": "2020-03-01T20:10:40.625Z",
+            "checkout_time_parent": "2020-03-03T20:10:40.625Z",
+            "walkin": true,
+            "lastname": "Piper",
+            "firstname": "Pide",
+            "chinese_name": "Chan",
+            "Remark": "None"
+        },
+        {
+            "booking_id": 2,
+            "reference_code": "BOOK2",
+            "create_date": "1973-03-30T18:15:30.625Z",
+            "booking_timeslot": "2020-03-01T20:10:40.625Z",
+            "bookingdate_and_timeslot": "2020-03-BOOK1",
+            "status": "active",
+            "member_id": 12,
+            "member_username": "msue",
+            "Attended": true,
+            "quota_used": false,
+            "checkin_headcount_children": 5,
+            "checkin_headcount_adults": 10,
+            "checkin_headcount_all": 20,
+            "checkin_time": "2020-03-01T20:10:40.625Z",
+            "checkout_time": "2020-03-03T20:10:40.625Z",
+            "checkin_time_parent": "2020-03-01T20:10:40.625Z",
+            "checkout_time_parent": "2020-03-03T20:10:40.625Z",
+            "walkin": true,
+            "lastname": "Sue",
+            "firstname": "Maria",
+            "chinese_name": "Ti",
+            "Remark": "None"
+        }
+    ]
+}
