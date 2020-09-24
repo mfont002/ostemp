@@ -19,8 +19,13 @@
             "status": "active",
             "member_id": 11,
             "member_username": "ppiper",
+<<<<<<< HEAD
             "Attended": true,
             "quota_used": false,
+=======
+            "Attended": "true",
+            "quota_used": "false",
+>>>>>>> 78fc7ef6b0a1e3205150ee665c9bb7b5cd0aab5c
             "checkin_headcount_children": 5,
             "checkin_headcount_adults": 10,
             "checkin_headcount_all": 20,
@@ -28,7 +33,11 @@
             "checkout_time": "2020-03-03T20:10:40.625Z",
             "checkin_time_parent": "2020-03-01T20:10:40.625Z",
             "checkout_time_parent": "2020-03-03T20:10:40.625Z",
+<<<<<<< HEAD
             "walkin": true,
+=======
+            "walkin": "true",
+>>>>>>> 78fc7ef6b0a1e3205150ee665c9bb7b5cd0aab5c
             "lastname": "Piper",
             "firstname": "Pide",
             "chinese_name": "Chan",
@@ -44,8 +53,13 @@
             "status": "active",
             "member_id": 12,
             "member_username": "msue",
+<<<<<<< HEAD
             "Attended": true,
             "quota_used": false,
+=======
+            "Attended": "true",
+            "quota_used": "false",
+>>>>>>> 78fc7ef6b0a1e3205150ee665c9bb7b5cd0aab5c
             "checkin_headcount_children": 5,
             "checkin_headcount_adults": 10,
             "checkin_headcount_all": 20,
@@ -53,11 +67,19 @@
             "checkout_time": "2020-03-03T20:10:40.625Z",
             "checkin_time_parent": "2020-03-01T20:10:40.625Z",
             "checkout_time_parent": "2020-03-03T20:10:40.625Z",
+<<<<<<< HEAD
             "walkin": true,
+=======
+            "walkin": "true",
+>>>>>>> 78fc7ef6b0a1e3205150ee665c9bb7b5cd0aab5c
             "lastname": "Sue",
             "firstname": "Maria",
             "chinese_name": "Ti",
             "Remark": "None"
         }
     ]
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 78fc7ef6b0a1e3205150ee665c9bb7b5cd0aab5c
