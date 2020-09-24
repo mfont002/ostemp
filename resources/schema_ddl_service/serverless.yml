@@ -17,6 +17,7 @@ frameworkVersion: '2'
 
 plugins:
   - serverless-offline
+  - serverless-plugin-scripts
 
 custom:
   stackname: !ImportValue 'StackName'

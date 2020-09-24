@@ -77,8 +77,9 @@ exports.create = (event, context, callback) => {
     ,
     'CREATE TABLE IF NOT EXISTS source_map(' +
     'source_id VARCHAR(100),' +
+    'source_name VARCHAR(12),' +
     'destination_id INT,' +
-    'destination_name VARCHAR(6)' +
+    'destination_name VARCHAR(12)' +
     ');'
     ,
     'CREATE TABLE IF NOT EXISTS member_group(' +
@@ -108,14 +109,14 @@ exports.create = (event, context, callback) => {
     ,
     'CREATE TABLE IF NOT EXISTS booking(' +
     'id INT AUTO_INCREMENT PRIMARY KEY,' +
-    'activity_type VARCHAR(6),' +
+    'activity_type VARCHAR(12),' +
     'member_id VARCHAR(7)' +
     ');'
     ,
     'CREATE TABLE IF NOT EXISTS booking_meta(' +
-    'member_id INT,' +
-    'member_key VARCHAR(100),' +
-    'member_value VARCHAR(255)' +
+    'booking_id INT,' +
+    'booking_key VARCHAR(100),' +
+    'booking_value VARCHAR(255)' +
     ');'
     ,
     'CREATE TABLE IF NOT EXISTS survey(' +

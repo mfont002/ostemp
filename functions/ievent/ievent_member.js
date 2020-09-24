@@ -15,13 +15,13 @@ const data = require('data-api-client')({
 });
 
 // axios
-import axios from 'axios';
+const axios = require('axios');
 
 //promise
 var Promise = require('promise');
 
 
-export function getmember(event, context, callback) {
+module.exports.getmember = (event, context, callback) => {
 
   const config = {
     method: 'get',
