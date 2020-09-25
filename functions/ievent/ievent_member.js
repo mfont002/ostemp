@@ -1,54 +1,48 @@
 //'use strict';
 
-
-
-// require the AWS SDK
-import { RDSDataService } from 'aws-sdk';
-const rdsDataService = new RDSDataService()
-
-
 // aws api-client
 const data = require('data-api-client')({
   secretArn: process.env.SECRETS_ARN,
   resourceArn: process.env.DB_ARN,
-  database: process.env.DB_NAME 
+  database: process.env.DB_NAME
 });
 
 // axios
 const axios = require('axios');
-
-//promise
-var Promise = require('promise');
 
 
 module.exports.getmember = (event, context, callback) => {
 
   const config = {
     method: 'get',
-    url: process.env.URL, //Need the actual endpoint. use https://jsonplaceholder.typicode.com/todos/ for now.
+    withCredentials: false,
+    //Need the actual endpoint. use https://jsonplaceholder.typicode.com/todos/ for now.
     params: {
-      id: JSON.parse(event.body).id  //Are we sending id as query variable? path variable? or no params?
+      id: event.pathParameters.id  //Are we sending id as query variable? path variable? or no params?
+      //id: JSON.parse(event.pathParameters).id 
     },
     responseType: 'json',
-    headers: { 'Authorization': 'AUTH_TOKEN' }, //we need a token?
+    /* headers: { 'Authorization': 'AUTH_TOKEN' }, //we need a token?
     auth: {           //We need some kind of auth?
       username: '',
       password: ''
-    }
-
+    } */
   }
 
-  getMember = async (config) => {
+  let getMember = async (config) => {
+    //const url = 'http://my-json-server.typicode.com/OneGlobe/ostemp/bookings'
+    const url = process.env.URL
     try {
-      const resp = await axios.get(config)
-      processUser(resp.data);
+      const resp = await axios.get(url, config)
+      const user = resp.data[0]
+      processUser(user);
     }
     catch (error) {
       console.error(error);
     }
   }
 
-  processUser = async (user) => {
+  let processUser = async (user) => {
     try {
       const mem = await processChild(user);
       processParent(user, mem);
@@ -61,7 +55,7 @@ module.exports.getmember = (event, context, callback) => {
   }
 
   //Process child in db
-  processChild = async (user) => {
+  let processChild = async (user) => {
 
     let dest_id = await data.query(
       'select source_id from source_map where source_id = :id',
@@ -70,11 +64,11 @@ module.exports.getmember = (event, context, callback) => {
 
     //check if member exists, if not create new
     if (dest_id == 0) {
+
       let child_res = await data.transaction().query('insert into member (member_type) VALUES(:member_type)', { member_type: 'child' })
-        .query((r) => ['insert into source_map (source_id, source_name, destination_id, destination_name) values(:source_id, :source_name, :destination_id, :destination_name)'],
-          [
-            [{ source_id: user.id, source_name: "ievents", destination_id: r.insertId, destination_name: "member" }]
-          ])
+        .query((r) => ['insert into source_map (source_id, source_name, destination_id, destination_name) values(:source_id, :source_name, :destination_id, :destination_name)',
+          { source_id: user.id, source_name: "ievents", destination_id: r.insertId, destination_name: "member" }
+        ])
         .rollback((e, status) => {
           console.log(e)
           return;
@@ -85,14 +79,13 @@ module.exports.getmember = (event, context, callback) => {
         'select destination_id from source_map where source_id = :id',
         { id: user.id }
       )
-      const child_id = res.forEach((col) => {
-        const x = col.destination_id
-        return x;
-      })
+
+      const child_id = res.records[0].destination_id
 
       child_res = await data.transaction().query('insert into member_group (type) values(:type)', { type: "household" })
         .query((r) => ['insert into member_group_map (member_id, group_id) values(:member_id, :group_id)',
-          { member_id: child_id, group_id: r.insertId }])
+          { member_id: child_id, group_id: r.insertId }
+        ])
         .rollback((e, status) => {
           console.log(e)
           return;
@@ -104,10 +97,9 @@ module.exports.getmember = (event, context, callback) => {
         'select group_id from member_group_map where member_id = :dest_id',
         { dest_id: child_id }
       )
-      const group_id = res.forEach((col) => {
-        const x = col.destination_id
-        return x;
-      })
+
+
+      const group_id = res.records[0].group_id
 
       child_res = await data.query('insert into member_group_meta (member_group_id, meta_key, meta_value) values(:member_group_id, :meta_key, :meta_value)',
         { member_group_id: group_id, meta_key: "name", meta_value: user.last_name + "Household" })
@@ -120,7 +112,7 @@ module.exports.getmember = (event, context, callback) => {
           { id: user.primary_member_id }
         )
         if (sib_id) {
-          parent_res = await data.query('insert into member_relationship (member_id1, member_id2, relationship) values(:id1, :id2, :rel)',
+          await data.query('insert into member_relationship (member_id1, member_id2, relationship) values(:id1, :id2, :rel)',
             { id1: child_id, id2: sib_id, rel: 'sibling' })
         }
       }
@@ -153,7 +145,14 @@ module.exports.getmember = (event, context, callback) => {
 
     //update meta_data with child
     else {
-      child_res = await data.query(`UPDATE member_meta set member_value = :member_value WHERE member_id = :member_id AND member_key = :member_key`,
+      let res = await data.query(
+        'select destination_id from source_map where source_id = :id',
+        { id: user.id }
+      )
+
+      const child_id = res.records[0].destination_id
+
+      let child_res = await data.query(`UPDATE member_meta set member_value = :member_value WHERE member_id = :member_id AND member_key = :member_key`,
         [
           [{ member_id: child_id, member_key: 'user_name', member_value: user.username }],
           [{ member_id: child_id, member_key: 'email', member_value: user.email }],
@@ -161,7 +160,7 @@ module.exports.getmember = (event, context, callback) => {
           [{ member_id: child_id, member_key: 'creation_date', member_value: user.creation_date }],
           [{ member_id: child_id, member_key: 'activated', member_value: user.activated }],
           [{ member_id: child_id, member_key: 'last_name', member_value: user.last_name }],
-          [{ member_id: child_id, member_key: 'first_name', member_value: user.first_name }],
+          [{ member_id: child_id, member_key: 'last_name', member_value: user.first_name }],
           [{ member_id: child_id, member_key: 'chinese_name', member_value: user.chinese_name }],
           [{ member_id: child_id, member_key: 'gender', member_value: user.gender }],
           [{ member_id: child_id, member_key: 'birthdate', member_value: user.birthday }],
@@ -178,10 +177,9 @@ module.exports.getmember = (event, context, callback) => {
     }
   }
 
-  //Process parent in db
-  processParent = (user, mem) => {
+  let processParent = async (user, mem) => {
 
-    dest_id = await data.query(
+    let dest_id = await data.query(
       'select destination_id from source_map where source_id = :id',
       { id: user.AdultID_Parent }
     )
@@ -189,10 +187,9 @@ module.exports.getmember = (event, context, callback) => {
     //check if member exists, if not create new
     if (dest_id == 0) {
       let parent_res = await data.transaction().query('insert into member (member_type) VALUES(:member_type)', { member_type: 'parent' })
-        .query((r) => ['insert into source_map (source_id, source_name, destination_id, destination_name) values(:source_id, :source_name, :destination_id, :destination_name)'],
-          [
-            [{ source_id: user.AdultID_Parent, source_name: 'ievents', destination_id: r.insertId, destination_name: 'member' }]
-          ])
+        .query((r) => ['insert into source_map (source_id, source_name, destination_id, destination_name) values(:source_id, :source_name, :destination_id, :destination_name)',
+          { source_id: user.AdultID_Parent, source_name: 'ievents', destination_id: r.insertId, destination_name: 'member' }
+        ])
         .rollback((e, status) => {
           console.log(e)
           return;
@@ -204,24 +201,20 @@ module.exports.getmember = (event, context, callback) => {
         { id: user.AdultID_Parent }
       )
 
-      const parent_id = res.forEach((col) => {
-        const x = col.destination_id
-        return x;
-      })
+      const parent_id = res.records[0].destination_id
 
-      parent_res = await data.query(['insert into member_group_map (member_id, group_id) values(:member_id, :group_id)',
+      await data.query(['insert into member_group_map (member_id, group_id) values(:member_id, :group_id)',
         { member_id: parent_id, group_id: mem.group_id }])
 
 
-      parent_res = await data.query('insert into member_relationship (member_id1, member_id2, relationship) VALUES(:id1, :id2, :rel)',
+      await data.query('insert into member_relationship (member_id1, member_id2, relationship) VALUES(:id1, :id2, :rel)',
         { id1: parent_id, id2: mem.child_id, rel: user.relationship })
 
 
-      parent_res = await data.query(`INSERT INTO member_meta (member_id,member_key,member_value) VALUES(:member_id,:member_key,:member_value)`,
+      await data.query(`INSERT INTO member_meta (member_id,member_key,member_value) VALUES(:member_id,:member_key,:member_value)`,
         [
           [{ member_id: parent_id, member_key: 'last_name', member_value: user.parent_last_name }],
           [{ member_id: parent_id, member_key: 'first_name', member_value: user.parent_first_name }],
-          [{ member_id: parent_id, member_key: 'chinese_name', member_value: user.chinese_name }],
           [{ member_id: parent_id, member_key: 'gender', member_value: user.parent_gender }],
           [{ member_id: parent_id, member_key: 'birthdate', member_value: user.parent_dob }],
           [{ member_id: parent_id, member_key: 'ethnicity', member_value: user.parent_ethnicity }],
@@ -239,7 +232,15 @@ module.exports.getmember = (event, context, callback) => {
     }
     else {
       //member exists, update the meta data for parent
-      parent_res = await data.query(`UPDATE member_meta set member_value = :member_value WHERE member_id = :member_id AND member_key = :member_key`,
+
+      let res = await data.query(
+        'select destination_id from source_map where source_id = :id',
+        { id: user.AdultID_Parent }
+      )
+
+      const parent_id = res.records[0].destination_id
+
+      await data.query(`UPDATE member_meta set member_value = :member_value WHERE member_id = :member_id AND member_key = :member_key`,
         [
           [{ member_id: parent_id, member_key: 'last_name', member_value: user.parent_last_name }],
           [{ member_id: parent_id, member_key: 'first_name', member_value: user.parent_first_name }],
@@ -262,9 +263,9 @@ module.exports.getmember = (event, context, callback) => {
   }
 
 
-  processCC1 = (user, mem) => {
+  let processCC1 = async (user, mem) => {
 
-    dest_id = await data.query(
+    let dest_id = await data.query(
       'select destination_id from source_map where source_id = :id',
       { id: user.AdultID_Caregiver_1 }
     )
@@ -272,10 +273,9 @@ module.exports.getmember = (event, context, callback) => {
     //check if member exists, if not create new
     if (dest_id == 0) {
       let parent_res = await data.transaction().query('insert into member (member_type) VALUES(:member_type)', { member_type: 'parent' })
-        .query((r) => ['insert into source_map (source_id, source_name, destination_id, destination_name) values(:source_id, :source_name, :destination_id, :destination_name)'],
-          [
-            [{ source_id: user.AdultID_Caregiver_1, source_name: 'ievents', destination_id: r.insertId, destination_name: 'member' }]
-          ])
+        .query((r) => ['insert into source_map (source_id, source_name, destination_id, destination_name) values(:source_id, :source_name, :destination_id, :destination_name)',
+          { source_id: user.AdultID_Caregiver_1, source_name: 'ievents', destination_id: r.insertId, destination_name: 'member' }
+        ])
         .rollback((e, status) => {
           console.log(e)
           return;
@@ -287,10 +287,9 @@ module.exports.getmember = (event, context, callback) => {
         { id: user.AdultID_Caregiver_1 }
       )
 
-      const cc1_id = res.forEach((col) => {
-        const x = col.destination_id
-        return x;
-      })
+
+      const cc1_id = res.records[0].destination_id
+
 
       parent_res = await data.query(['insert into member_group_map (member_id, group_id) values(:member_id, :group_id)',
         { member_id: cc1_id, group_id: mem.group_id }])
@@ -306,8 +305,8 @@ module.exports.getmember = (event, context, callback) => {
           [{ member_id: cc1_id, member_key: 'first_name', member_value: user.cgg_1_caregiver_firstname }],
           [{ member_id: cc1_id, member_key: 'chinese_name', member_value: user.cgg_1_caregiver_chinese_name }],
           [{ member_id: cc1_id, member_key: 'gender', member_value: user.cgg_1_caregiver_gender }],
-          [{ member_id: cc1_id, member_key: 'date_of_birth', member_value: user.cgg_1_caregiver_gender }],
-          [{ member_id: cc1_id, member_key: 'ethnicity', member_value: user.cgg_1_caregiver_gender }],
+          [{ member_id: cc1_id, member_key: 'date_of_birth', member_value: user.cgg_1_date_of_birth }],
+          [{ member_id: cc1_id, member_key: 'ethnicity', member_value: user.cgg_1_ethnicity }],
           [{ member_id: cc1_id, member_key: 'relationship', member_value: user.cgg_1_caregiver_relationship }],
           [{ member_id: cc1_id, member_key: 'hkid', member_value: user.cgg_1_caregiver_hkid }],
           [{ member_id: cc1_id, member_key: 'contact_number', member_value: user.cgg_1_caregiver_contact_no }]
@@ -317,7 +316,15 @@ module.exports.getmember = (event, context, callback) => {
     }
     else {
       //member exists, update the meta data for cc1
-      parent_res = await data.query(`UPDATE member_meta set member_value = :member_value WHERE member_id = :member_id AND member_key = :member_key`,
+
+      let res = await data.query(
+        'select destination_id from source_map where source_id = :id',
+        { id: user.AdultID_Caregiver_1 }
+      )
+
+      const cc1_id = res.records[0].destination_id
+
+      await data.query(`UPDATE member_meta set member_value = :member_value WHERE member_id = :member_id AND member_key = :member_key`,
         [
           [{ member_id: cc1_id, member_key: 'last_name', member_value: user.cgg_1_caregiver_surname }],
           [{ member_id: cc1_id, member_key: 'first_name', member_value: user.cgg_1_caregiver_firstname }],
@@ -331,12 +338,12 @@ module.exports.getmember = (event, context, callback) => {
         ]
       )
     }
-
   }
 
 
-  processCC2 = (user, mem) => {
-    dest_id = await data.query(
+  let processCC2 = async (user, mem) => {
+
+    let dest_id = await data.query(
       'select destination_id from source_map where source_id = :id',
       { id: user.AdultID_Caregiver_2 }
     )
@@ -344,25 +351,23 @@ module.exports.getmember = (event, context, callback) => {
     //check if member exists, if not create new
     if (dest_id == 0) {
       let parent_res = await data.transaction().query('insert into member (member_type) VALUES(:member_type)', { member_type: 'parent' })
-        .query((r) => ['insert into source_map (source_id, source_name, destination_id, destination_name) values(:source_id, :source_name, :destination_id, :destination_name)'],
-          [
-            [{ source_id: user.AdultID_Caregiver_2, source_name: 'ievents', destination_id: r.insertId, destination_name: 'member' }]
-          ])
+        .query((r) => ['insert into source_map (source_id, source_name, destination_id, destination_name) values(:source_id, :source_name, :destination_id, :destination_name)',
+          { source_id: user.AdultID_Caregiver_2, source_name: 'ievents', destination_id: r.insertId, destination_name: 'member' }
+        ])
         .rollback((e, status) => {
           console.log(e)
           return;
         })
         .commit()
 
+
       let res = await data.query(
         'select destination_id from source_map where source_id = :id',
-        { id: user.AdultID_Caregiver_1 }
+        { id: user.AdultID_Caregiver_2 }
       )
 
-      const cc2_id = res.forEach((col) => {
-        const x = col.destination_id
-        return x;
-      })
+      const cc2_id = res.records[0].destination_id
+
 
       parent_res = await data.query(['insert into member_group_map (member_id, group_id) values(:member_id, :group_id)',
         { member_id: cc2_id, group_id: mem.group_id }])
@@ -389,7 +394,15 @@ module.exports.getmember = (event, context, callback) => {
     }
     else {
       //member exists, update the meta data for cc2
-      parent_res = await data.query(`UPDATE member_meta set member_value = :member_value WHERE member_id = :member_id AND member_key = :member_key`,
+
+      let res = await data.query(
+        'select destination_id from source_map where source_id = :id',
+        { id: user.AdultID_Caregiver_2 }
+      )
+
+      const cc2_id = res.records[0].destination_id
+
+      let parent_res = await data.query(`UPDATE member_meta set member_value = :member_value WHERE member_id = :member_id AND member_key = :member_key`,
         [
           [{ member_id: cc2_id, member_key: 'last_name', member_value: user.cgg_2_caregiver_surname }],
           [{ member_id: cc2_id, member_key: 'first_name', member_value: user.cgg_2_caregiver_firstname }],
@@ -411,5 +424,4 @@ module.exports.getmember = (event, context, callback) => {
 
 
 }
-
 
