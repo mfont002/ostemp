@@ -4,13 +4,23 @@
 ```
 Install the following packages:
 $ npm i axios
-$ npm i data-api-client --save-dev   https://github.com/jeremydaly/data-api-client#Data API Client
+$ npm i data-api-client   https://github.com/jeremydaly/data-api-client#Data API Client
 $ npm i serverless-plugin-scripts
+
+Make sure the node dependencies are also installed where your serverless file is installed so they can be auto packaged when deploying the lambdas
 
 
 Use the deploy.sh file to deploy the onesky resources. Edit param names (only if you want to change the dir structure for files) and run the file.
 $ ./deploy.sh
 ```
+
+## Testing.
+The db.json file has the payload that can be used for both the ievent_attendance and ievent_member functions:
+http://my-json-server.typicode.com/OneGlobe/ostemp/members
+http://my-json-server.typicode.com/OneGlobe/ostemp/bookings
+
+This is served with a quick and easy fake online rest server: https://my-json-server.typicode.com/
+
 
 ## Project Structure
 ```python
