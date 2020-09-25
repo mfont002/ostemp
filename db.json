@@ -63,7 +63,7 @@
     "members": [
         {
             "id": 1,
-            "user_name": "fsinatra",
+            "username": "fsinatra",
             "email": "frank@sinatra.com",
             "status": "active",
             "creation_date": "2020-03-01T20:10:40.625Z",
@@ -115,7 +115,7 @@
         },
         {
             "id": 2,
-            "user_name": "fsinatra",
+            "username": "fsinatra",
             "email": "frank@sinatra.com",
             "status": "active",
             "creation_date": "2020-03-01T20:10:40.625Z",
