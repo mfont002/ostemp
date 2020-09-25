@@ -14,6 +14,10 @@
 service: ievent2
 frameworkVersion: '2'
 
+custom:
+  stackname: !ImportValue 'StackName'
+  FUNCTION_PATH: ${env:ievent_functionpath}
+  
 
 provider:
   name: aws
@@ -23,11 +27,13 @@ provider:
   stage: dev
   region: us-east-2
   environment:
-   DB_ARN: arn:aws:rds:us-east-2:606250419149:cluster:onesky-rds-cluster
-   SECRETS_ARN: arn:aws:secretsmanager:us-east-2:606250419149:secret:dev-AuroraUserSecret-7u54OK
-   DB_NAME: onesky_db
+   DB_ARN: !ImportValue 'DatabaseClusterArn'
+   SECRETS_ARN: !ImportValue 'DatabaseSecretArn'
+   DB_NAME: !ImportValue 'DatabaseName'
    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
-   URL: http://my-json-server.typicode.com/OneGlobe/ostemp/bookings
+   URL_IEVENT_MEMBER: ${ievent_member_url}
+   URL_IEVENT_ATTENDANCE: ${ievent_attendance_url}
+   
 
   iamRoleStatements:
     - Effect: Allow
@@ -65,21 +71,19 @@ package:
 
 functions:
   member_function:
-    #handler: ${self:custom.FUNCTION_PATH}/ievent_member.getmember
-    handler: ievent_member.getmember
+    handler: ${self:custom.FUNCTION_PATH}/ievent_member.getmember
     memorySize: 1024
     events:
        - eventBridge:
-          eventBus: ievent_member2
+          eventBus: ievent_member
           pattern:
             source:
               - ievent.getmember
   attendance_function:     
-    #handler: ${self:custom.FUNCTION_PATH}/ievent_attendance.getattendance
-    handler: ievent_attendance.getattendance
+    handler: ${self:custom.FUNCTION_PATH}/ievent_attendance.getattendance
     events:
        - eventBridge:
-          eventBus: ievent_attendance2
+          eventBus: ievent_attendance
           pattern:
             source:
               - ievent.getattendance

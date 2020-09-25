@@ -28,7 +28,7 @@ module.exports.getattendance = (event, context, callback) => {
 
   let getBooking = async (config) => {
     //const url = 'http://my-json-server.typicode.com/OneGlobe/ostemp/bookings'
-    const url = process.env.URL
+    const url = process.env.URL_IEVENT_ATTENDANCE
     try {
       const resp = await axios.get(url, config)
       const booking = resp.data[0]

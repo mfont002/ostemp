@@ -26,8 +26,8 @@ module.exports.getmember = (event, context, callback) => {
   }
 
   let getMember = async (config) => {
-    const url = 'http://my-json-server.typicode.com/OneGlobe/ostemp/members'
-    //const url = process.env.URL
+    //const url = 'http://my-json-server.typicode.com/OneGlobe/ostemp/members'
+    const url = process.env.URL_IEVENT_MEMBER
     try {
       const resp = await axios.get(url, config)
       const user = resp.data[0]

@@ -8,6 +8,8 @@ export pathto_kobo_funct=functions/kobo
 export pathto_wordpress_funct=functions/wordpress
 export pathto_dbschema_funct=resources/schema_ddl_service
 export db_cluster_name=onesky-rds-cluster
+export ievent_member_url='http://my-json-server.typicode.com/OneGlobe/ostemp/members'
+export ievent_attendance_url='http://my-json-server.typicode.com/OneGlobe/ostemp/members'
 
 
 if [ -z "$stackname" ] || [ -z "$path_to_resources" ] || [ -z "$db_cluster_name" ]; then
@@ -36,7 +38,7 @@ if [ -z "$pathto_ievent_funct" ] || [ -z "$pathto_kobo_funct" ] || [ -z "$pathto
   exit 1
 fi
 
-ievent_functionpath=${pathto_ievent_funct} serverless deploy --config ${pathto_ievent_funct}/serverless.yml
+ievent_member_url=${ievent_member_url} ievent_attendance_url=${ievent_attendance_url} ievent_functionpath=${pathto_ievent_funct} serverless deploy --config ${pathto_ievent_funct}/serverless.yml
 kobo_functionpath=${pathto_kobo_funct} serverless deploy --config ${pathto_kobo_funct}/serverless.yml
 wordpress_functionpath=${pathto_wordpress_funct} serverless deploy --config ${pathto_wordpress_funct}/serverless.yml
 
