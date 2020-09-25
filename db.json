@@ -62,6 +62,7 @@
     ],
     "members": [
         {
+            "id": 1,
             "user_name": "fsinatra",
             "email": "frank@sinatra.com",
             "status": "active",
@@ -113,6 +114,7 @@
 
         },
         {
+            "id": 2,
             "user_name": "fsinatra",
             "email": "frank@sinatra.com",
             "status": "active",
