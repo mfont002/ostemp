@@ -13,7 +13,6 @@ module.exports.getattendance = (event, context, callback) => {
   const config = {
     method: 'get',
     withCredentials: false,
-    //Need the actual endpoint. use https://jsonplaceholder.typicode.com/todos/ for now.
     params: {
       id: event.pathParameters.id  //Are we sending id as query variable? path variable? or no params?
       //id: JSON.parse(event.pathParameters).id 
