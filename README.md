@@ -9,7 +9,6 @@ $ npm i serverless-plugin-scripts
 
 Make sure the node dependencies are also installed where your serverless file is installed so they can be auto packaged when deploying the lambdas
 
-
 Use the deploy.sh file to deploy the onesky resources. Edit param names (only if you want to change the dir structure for files) and run the file.
 $ ./deploy.sh
 ```
@@ -20,7 +19,7 @@ The db.json file has the payload that can be used for both the ievent_attendance
 http://my-json-server.typicode.com/OneGlobe/ostemp/members
 http://my-json-server.typicode.com/OneGlobe/ostemp/bookings
 
-This is served with a quick and easy fake online rest server: https://my-json-server.typicode.com/
+These json payloads are served with a mock online rest server at: https://my-json-server.typicode.com/
 ```
 
 ## Project Structure
