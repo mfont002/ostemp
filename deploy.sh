@@ -9,11 +9,11 @@ export pathto_wordpress_funct=functions/wordpress
 export pathto_dbschema_funct=resources/schema_ddl_service
 export db_cluster_name=onesky-rds-cluster
 export ievent_member_url='http://my-json-server.typicode.com/OneGlobe/ostemp/members'
-export ievent_attendance_url='http://my-json-server.typicode.com/OneGlobe/ostemp/members'
-export kobo_getsurvey_url='http://my-json-server.typicode.com/OneGlobe/ostemp/members'
-export kobo_createsurvey_url='http://my-json-server.typicode.com/OneGlobe/ostemp/members'
-export wp_create_url='http://my-json-server.typicode.com/OneGlobe/ostemp/members'
-export wp_get_url='http://my-json-server.typicode.com/OneGlobe/ostemp/members'
+export ievent_attendance_url='http://my-json-server.typicode.com/OneGlobe/ostemp/bookings'
+export kobo_getsurvey_url=SETME
+export kobo_createsurvey_url=SETME
+export wp_create_url=SETME
+export wp_get_url=SETME
 
 
 if [ -z "$stackname" ] || [ -z "$path_to_resources" ] || [ -z "$db_cluster_name" ]; then
