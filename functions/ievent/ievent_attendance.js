@@ -74,6 +74,9 @@ module.exports.getattendance = (event, context, callback) => {
           'select destination_id from source_map where source_id = :id',
           { id: booking.booking_id }
         )
+
+        if (res.records[0] != null && res.records[0] != 0) {
+
         const book_id = res.records[0].destination_id
 
         await data.query(`INSERT INTO booking_meta (booking_id,booking_key,booking_value) VALUES(:booking_id,:booking_key,:booking_value)`,
@@ -98,6 +101,8 @@ module.exports.getattendance = (event, context, callback) => {
         )
       }
 
+    }
+
       //booking doesn't exist update meta_data with child
       else {
         let res = await data.query(
@@ -105,6 +110,9 @@ module.exports.getattendance = (event, context, callback) => {
           { id: booking.booking_id }
         )
         const book_id = res.records[0].destination_id
+
+
+        if (res.records[0] != null && res.records[0] != 0) {
 
         await data.query(`UPDATE booking_meta set booking_value = :booking_value WHERE booking_id = :booking_id AND booking_key = :booking_key`,
           [
@@ -127,6 +135,8 @@ module.exports.getattendance = (event, context, callback) => {
           ]
         )
       }
+
+    }
 
     }
     catch (error) {

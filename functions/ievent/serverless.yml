@@ -31,8 +31,8 @@ provider:
    SECRETS_ARN: !ImportValue 'DatabaseSecretArn'
    DB_NAME: !ImportValue 'DatabaseName'
    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
-   URL_IEVENT_MEMBER: ${ievent_member_url}
-   URL_IEVENT_ATTENDANCE: ${ievent_attendance_url}
+   URL_IEVENT_MEMBER: ${env:ievent_member_url}
+   URL_IEVENT_ATTENDANCE: ${env:ievent_attendance_url}
    
 
   iamRoleStatements:
@@ -57,7 +57,7 @@ provider:
     - Effect: 'Allow'
       Action:
         - 'secretsmanager:GetSecretValue'
-      Resource: 'arn:aws:secretsmanager:us-east-2:606250419149:secret:dev-AuroraUserSecret-7u54OK'
+      Resource: !ImportValue 'DatabaseSecretArn'
 
 # you can add packaging information here
 package:
@@ -75,7 +75,7 @@ functions:
     memorySize: 1024
     events:
        - eventBridge:
-          eventBus: ievent_member
+          eventBus: ievent_member_bus
           pattern:
             source:
               - ievent.getmember
@@ -83,7 +83,7 @@ functions:
     handler: ${self:custom.FUNCTION_PATH}/ievent_attendance.getattendance
     events:
        - eventBridge:
-          eventBus: ievent_attendance
+          eventBus: ievent_attendance_bus
           pattern:
             source:
               - ievent.getattendance

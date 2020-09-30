@@ -29,6 +29,9 @@ provider:
    DB_ARN: !ImportValue 'DatabaseClusterArn'
    SECRETS_ARN: !ImportValue 'DatabaseSecretArn'
    DB_NAME: !ImportValue 'DatabaseName'
+   AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+   URL_WP_GETSURVEY: ${env:kobo_getsurvey_url}
+   URL_WP_CREATESURVEY: ${env:kobo_createsurvey_url}
 
   iamRoleStatements:
     - Effect: Allow
