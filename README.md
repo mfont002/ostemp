@@ -7,7 +7,8 @@ $ npm i axios
 $ npm i data-api-client   https://github.com/jeremydaly/data-api-client#Data API Client
 $ npm i serverless-plugin-scripts
 
-Make sure the node dependencies are also installed where your serverless file is installed so they can be auto packaged when deploying the lambdas
+Using the deploy.sh file will deploy these dependencies for you.  Either way, make sure they are installed in
+same dir as your serverless file so they can be auto packaged when deploying the lambdas.
 
 Use the deploy.sh file to deploy the onesky resources. Edit param names (only if you want to change the dir structure for files) and run the file.
 $ ./deploy.sh
