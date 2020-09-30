@@ -34,7 +34,7 @@ resources/schema_ddl_service/
 
 ```js
 
-functions folder. Contains the serverless lambdas to work with mysql and call 3rd party apis for ievent, kobotoolbox and wordpress:
+functions folder. Contains the serverless lambdas to work with auroradb and call 3rd party apis for ievent, kobotoolbox and wordpress:
 
 functions/
 functions/ievent/ - 
