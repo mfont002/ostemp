@@ -25,7 +25,7 @@ This is served with a quick and easy fake online rest server: https://my-json-se
 
 ## Project Structure
 ```js
-resources folder. Creates the the auroradb and secretsmanager store for the db authentication.  
+Resources folder. Creates the the auroradb and secretsmanager store for the db authentication.  
 Contains the serverless lambda that generates the DDL for the onesky db schema:
 
 resources/
@@ -34,7 +34,7 @@ resources/schema_ddl_service/
 
 ```js
 
-functions folder. Contains the serverless lambdas to work with auroradb and call 3rd party apis for ievent, kobotoolbox and wordpress:
+Functions folder. Contains the serverless lambdas to work with auroradb and call 3rd party apis for ievent, kobotoolbox and wordpress:
 
 functions/
 functions/ievent/ - 
