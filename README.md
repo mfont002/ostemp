@@ -2,16 +2,17 @@
 ## Deploying the infrustructure.
 
 ```
-Install the following packages:
+The deploy.sh file can be used to deploy the onesky resources. Edit param names (only if you want to change the dir structure for files) and run the file.
+$ ./deploy.sh
+
+The project requires the following dependencies:
 $ npm i axios
-$ npm i data-api-client   https://github.com/jeremydaly/data-api-client#Data API Client
+$ npm i data-api-client   (https://github.com/jeremydaly/data-api-client#Data API Client)
 $ npm i serverless-plugin-scripts
 
-The deploy.sh file will install these dependencies for you.  Either way, make sure they are installed in
-same dir as your serverless file so they can be auto packaged when deploying the lambdas.
+These are installed by the deploy.sh file but can also be manually installed. Make sure they are installed where the serverless files 
+reside so they can be autopackaged as dependencies when the lambdas are deployed.
 
-Use the deploy.sh file to deploy the onesky resources. Edit param names (only if you want to change the dir structure for files) and run the file.
-$ ./deploy.sh
 ```
 
 ## Testing.
