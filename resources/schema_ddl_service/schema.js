@@ -15,62 +15,10 @@ exports.create = (event, context, callback) => {
     'last_name VARCHAR(100),' +
     'email VARCHAR(100),' +
     'phone VARCHAR(100),' +
-    'hkid  VARCHAR(100),' +
-    'chinese_name VARCHAR(100),' +
-    'gender VARCHAR(1),' +
-    'birthday VARCHAR(20),' +
-    'child_ethnicity VARCHAR(20),' +
-    'born_in_hk VARCHAR(20),' +
-    'date_of_arrival VARCHAR(20),' +
-    'child_dev VARCHAR(20),' +
-    'child_diag VARCHAR(100),' +
-    'child_birth_place VARCHAR(100),' +
-    'parent_lastname VARCHAR(100),' +
-    'parent_firstname VARCHAR(100),' +
-    'parent_chinese_name VARCHAR(100),' +
-    'parent_dob VARCHAR(20),' +
-    'parent_gender VARCHAR(1),' +
-    'parent_marital_status VARCHAR(20),' +
-    'parent_ethnicity VARCHAR(20),' +
-    'parent_born_in_hk VARCHAR(20),' +
-    'parent_date_of_arrival VARCHAR(20),' +
-    'parent_birth_place VARCHAR(100),' +
-    'relationship VARCHAR(100),' +
-    'parent_hkid  VARCHAR(150),' +
-    'parent_contact_no VARCHAR(100),' +
-    'address VARCHAR(150),' +
-    'parent_cssa_iss VARCHAR(100),' +
-    'parent_monthly_income_household VARCHAR(100),' +
-    'parent_hear_about_us VARCHAR(100),' +
-    'cgg_1_caregiver_surname VARCHAR(250),' +
-    'cgg_1_caregiver_firstname VARCHAR(250),' +
-    'cgg_1_caregiver_chinese_name VARCHAR(250),' +
-    'cgg_1_caregiver_gender VARCHAR(1),' +
-    'cgg_1_caregiver_dob  VARCHAR(20),' +
-    'cgg_1_caregiver_ethnicity  VARCHAR(20),' +
-    'cgg_1_caregiver_hkid  VARCHAR(100),' +
-    'cgg_1_caregiver_relationship  VARCHAR(100),' +
-    'cgg_1_caregiver_contact_no  VARCHAR(100),' +
-    'cgg_2_caregiver_surname  VARCHAR(250),' +
-    'cgg_2_caregiver_firstname  VARCHAR(250),' +
-    'cgg_2_caregiver_chinese_name  VARCHAR(250),' +
-    'cgg_2_caregiver_gender  VARCHAR(250),' +
-    'cgg_2_caregiver_dob  VARCHAR(250),' +
-    'cgg_2_caregiver_ethnicity  VARCHAR(250),' +
-    'cgg_2_caregiver_hkid  VARCHAR(250),' +
-    'cgg_2_caregiver_relationship  VARCHAR(250),' +
-    'cgg_2_caregiver_contact_no  VARCHAR(250),' +
-    'energency_name  VARCHAR(250),' +
-    'emergency_contact_no  VARCHAR(250),' +
-    'emergency_relationship  VARCHAR(250),' +
-    'companion VARCHAR(250),' +
-    'FIELD67 VARCHAR(250),' +
-    'expiration_date  VARCHAR(250),' +
-    'member_legal_guardian  VARCHAR(250),' +
-    'disclaimer_and_pics  VARCHAR(250));'
+    'hkid  VARCHAR(100)'+');'
     ,
     'CREATE TABLE IF NOT EXISTS member_meta(' +
-    'member_id INT,' +
+    'member_id INT(11),' +
     'member_key VARCHAR(100),' +
     'member_value VARCHAR(255)' +
     ');'
@@ -78,7 +26,7 @@ exports.create = (event, context, callback) => {
     'CREATE TABLE IF NOT EXISTS source_map(' +
     'source_id VARCHAR(100),' +
     'source_name VARCHAR(12),' +
-    'destination_id INT,' +
+    'destination_id INT(11),' +
     'destination_name VARCHAR(12)' +
     ');'
     ,
@@ -89,21 +37,21 @@ exports.create = (event, context, callback) => {
     ');'
     ,
     'CREATE TABLE IF NOT EXISTS member_group_meta(' +
-    'member_group_id INT,' +
+    'member_group_id INT(11),' +
     'meta_key VARCHAR(4),' +
     'meta_value VARCHAR(150),' +
     'last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP' +
     ');'
     ,
     'CREATE TABLE IF NOT EXISTS member_group_map(' +
-    'member_id INT,' +
-    'group_id INT,' +
+    'member_id INT(11),' +
+    'group_id INT(11),' +
     'last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP' +
     ');'
     ,
     'CREATE TABLE IF NOT EXISTS member_relationship(' +
-    'member_id1 INT,' +
-    'member_id2 INT,' +
+    'member_id1 INT(11),' +
+    'member_id2 INT(11),' +
     'relationship VARCHAR(7)' +
     ');'
     ,
