@@ -2,7 +2,7 @@
 ## Deploying the infrustructure.
 
 ```
-The deploy.sh file can be used to deploy the onesky resources. Edit param names (only if you want to change the dir structure for files) and run the file.
+Install npm then run the deploy.sh file to deploy the onesky resources. Edit param names (only if you want to change the dir structure for files).
 $ ./deploy.sh
 
 The project requires the following dependencies:
