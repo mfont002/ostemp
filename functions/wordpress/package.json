@@ -1,8 +1,8 @@
 {
-  "name": "ievent",
+  "name": "wordpress",
   "version": "1.0.0",
   "description": "",
-  "main": "ievent_attendance.js",
+  "main": "wordpress_createuser.js",
   "dependencies": {
     "axios": "^0.20.0",
     "data-api-client": "^1.1.0",

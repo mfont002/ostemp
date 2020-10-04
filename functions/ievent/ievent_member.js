@@ -10,7 +10,6 @@ const data = require('data-api-client')({
 // axios
 const axios = require('axios');
 
-
 module.exports.getmember = (event, context, callback) => {
 
   const config = {
@@ -18,15 +17,11 @@ module.exports.getmember = (event, context, callback) => {
     withCredentials: false,
     params: {
       id: event.pathParameters.id  //Are we sending id as query variable? path variable? or no params?
-      //id: JSON.parse(event.pathParameters).id 
     },
-    responseType: 'json',
-    /* headers: { 'Authorization': 'AUTH_TOKEN' }, //we need a token?
-   */
+    responseType: 'json'
   }
 
   let getMember = async (config) => {
-    //const url = 'http://my-json-server.typicode.com/OneGlobe/ostemp/members'
     const url = process.env.URL_IEVENT_MEMBER
     try {
       const resp = await axios.get(url, config)

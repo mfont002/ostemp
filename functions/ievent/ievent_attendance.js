@@ -15,19 +15,11 @@ module.exports.getattendance = (event, context, callback) => {
     withCredentials: false,
     params: {
       id: event.pathParameters.id  //Are we sending id as query variable? path variable? or no params?
-      //id: JSON.parse(event.pathParameters).id 
     },
-    responseType: 'json',
-    /* headers: { 'Authorization': 'AUTH_TOKEN' }, //we need a token?
-    auth: {           //We need some kind of auth?
-      username: '',
-      password: ''
-    } */
-
+    responseType: 'json'
   }
 
   let getBooking = async (config) => {
-    //const url = 'http://my-json-server.typicode.com/OneGlobe/ostemp/bookings'
     const url = process.env.URL_IEVENT_ATTENDANCE
     try {
       const resp = await axios.get(url, config)
@@ -75,7 +67,7 @@ module.exports.getattendance = (event, context, callback) => {
           { id: booking.booking_id }
         )
 
-        if (res.records[0] != null && res.records[0] != 0) {
+        if (res.records != null && res.records[0] != 0) {
 
         const book_id = res.records[0].destination_id
 
@@ -109,10 +101,10 @@ module.exports.getattendance = (event, context, callback) => {
           'select destination_id from source_map where source_id = :id',
           { id: booking.booking_id }
         )
-        const book_id = res.records[0].destination_id
+        
+        if (res.records != null && res.records[0] != 0) {
 
-
-        if (res.records[0] != null && res.records[0] != 0) {
+          const book_id = res.records[0].destination_id
 
         await data.query(`UPDATE booking_meta set booking_value = :booking_value WHERE booking_id = :booking_id AND booking_key = :booking_key`,
           [
