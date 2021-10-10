@@ -173,7 +173,19 @@
             "cgg_2_caregiver_contact_no": "321"
            
         }   
-]
+],
+    "datasets":[
+        { 
+         name: "NIV", 
+         authUrl: "https://niv.hivue.mobdso.com/api/user/impersonate", 
+         uiUrl: "https://niv.hivue.mobdso.com" 
+        },
+        { 
+         name: "Refugee", 
+         authUrl: "https://refugee.hivue.mobdso.com/api/user/impersonate", 
+         uiUrl: "https://refugee.hivue.mobdso.com" 
+        }
+    ]
 }
 
 
